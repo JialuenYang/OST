@@ -5,6 +5,8 @@ import { PlayerInterface, PlayerVars } from "./YouTubeInterface";
 type Props = {
 	playerRef(player: any): void;
 	url: string;
+	playing: boolean;
+	setPlaying: React.Dispatch<React.SetStateAction<boolean>>;
 	updateProgress(state: OnProgressProps): void;
 	startSeconds?: number;
 	endSeconds?: number;
@@ -25,14 +27,29 @@ const YTPlayer = (props: Props) => {
 		// this.player.playVideo();
 	};
 
+	const handlePlay = () => {
+		props.setPlaying(true);
+	};
+
+	const handlePause = () => {
+		props.setPlaying(false);
+	};
+
 	const handleEnded = () => {
 		// const { startSeconds } = this.props;
 		// this.player.seekTo(startSeconds === undefined ? 0 : startSeconds);
 		// this.player.playVideo();
 	};
 
-	const { playerRef, url, updateProgress, volume, startSeconds, endSeconds } =
-		props;
+	const {
+		playerRef,
+		url,
+		playing,
+		updateProgress,
+		volume,
+		startSeconds,
+		endSeconds,
+	} = props;
 
 	let playerVars: PlayerVars = {
 		autoplay: 1, // Auto-play the video on load
@@ -65,12 +82,15 @@ const YTPlayer = (props: Props) => {
 			ref={playerRef}
 			url={url}
 			config={{ playerVars }}
-			playing={true}
+			playing={playing}
 			loop={true}
-			volume={volume}
+			volume={volume && volume / 100.0}
 			onProgress={updateProgress}
-			// onReady={handleReady}
-			// onEnded={handleEnded}
+			progressInterval={300}
+			onReady={handleReady}
+			onPlay={handlePlay}
+			onPause={handlePause}
+			onEnded={handleEnded}
 		/>
 	);
 };
